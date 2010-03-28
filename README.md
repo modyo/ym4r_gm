@@ -1,4 +1,5 @@
-# YM4R/GM plugin for Rails
+# YM4R/GM plugin for Rails 3
+Note by guilleiguaran: If you need the version for Rails 2.x check this repo: <a href="http://github.com/ewildgoose/ym4r_gm">http://github.com/ewildgoose/ym4r_gm</a>
 
 This is the latest version of the YM4R/GM plugin for Rails (YM4RGMP4R?). Its aim is to facilitate the use of Google Maps from Rails application. It includes and enhances all the web application-related functionalities found in the YM4R gem as of version 0.4.1.
 
@@ -206,23 +207,21 @@ Here is how you would use it from your Ruby code:
 >	@map = GMap.new("map_div")
 >	marker1 = GMarker.new([123.55,123.988],:info_window => "Hello from 1!")
 >	marker2 = GMarker.new([87.123,18.9],:info_window =>"Hello from 2!")
->	@map.overlay_global_init(GMarkerGroup.new(true,
->					1 => marker1,
->					2 => marker2),"myGroup")
+>	@map.overlay_global_init(GMarkerGroup.new(true, 1 => marker1, 2 => marker2),"myGroup")
 
-Here I have created an active (ie which is going to be displayed when the map is created) marker group called +myGroup+ with 2 markers, which I want to reference later. If I did not want to reference them later (I just want to be able to display and undisplay the marker group), I could have passed an array instead of the hash.
+Here I have created an active (ie which is going to be displayed when the map is created) marker group called *myGroup* with 2 markers, which I want to reference later. If I did not want to reference them later (I just want to be able to display and undisplay the marker group), I could have passed an array instead of the hash.
 
 Then in your template, you could have that:
 
->	<a href="#" onclick="myGroup.showMarker(1);return false;">Click here to display marker1</a>
->	<a href="#" onclick="myGroup.showMarker(2);return false;">Click here to display marker2</a>
+>	... onclick="myGroup.showMarker(1);return false;"
+>	... onclick="myGroup.showMarker(2);return false;"
 >	<%= @map.div %>
 
 When you click on one of the links, the corresponding marker has its info window displayed.
 
-You can call +activate+ and +deactivate+ to display or undisplay a group of markers. You can add new markers with *addMarker(marker,id)*. Again if you don't care about referencing the marker, you don't need to pass an id. If the marker group is active, the newly added marker will be displayed immediately. Otherwise it will be displayed the next time the group is activated. Finally, since it is an overlay, the group will be removed when calling clearOverlays on the GMap object.
+You can call *activate* and *deactivate* to display or undisplay a group of markers. You can add new markers with *addMarker(marker,id)*. Again if you don't care about referencing the marker, you don't need to pass an id. If the marker group is active, the newly added marker will be displayed immediately. Otherwise it will be displayed the next time the group is activated. Finally, since it is an overlay, the group will be removed when calling clearOverlays on the GMap object.
 
-You can center and zoom on all the markers in the group by calling *GMarkerGroup#centerAndZoomOnMarkers()* after the group has been added to a map. So for example, if you would want to do that at initalization time, you would do the following (assuming your marker group has been declared as +group+):
+You can center and zoom on all the markers in the group by calling *GMarkerGroup#centerAndZoomOnMarkers()* after the group has been added to a map. So for example, if you would want to do that at initalization time, you would do the following (assuming your marker group has been declared as *group*):
 	@map.record_init group.center_and_zoom_on_markers
 
 ### GMarkerManager
@@ -282,7 +281,7 @@ Then to add the clusterer to the map at initialization time, you proceed as with
 
 To add new markers in RJS (if the clusterer has been declared globally with overlay_global_init), you should do this:
 >	page << raw(clusterer.add_marker(marker,description))
-In this case, the *:description* passed to the GMarker contructor will not be taken into account. Only the +description+ passed in the call to +add_marker+ will.
+In this case, the *:description* passed to the GMarker contructor will not be taken into account. Only the *description* passed in the call to +add_marker+ will.
 
 ### GeoRss Overlay
 An group of markers taken from a Rss feed containing location information in the W3C basic geo (WGS83 lat/lon) vocabulary and in the Simple GeoRss format. See http://georss.org for more details. The support for GeoRss relies on the MGeoRSS library by Mikel Maron (http://brainoff.com/gmaps/mgeorss.html), although a bit modified, mostly to have the GeoRssOverlay respect the GOverlay API. It has also been enhanced by Andrew Turner who added support for the GeoRss Simple format.
@@ -389,7 +388,7 @@ Here for the "Test WMS" map type, we also take the first layer of the "Satellite
 
 Finally to add a map type to a GMap:
 >	@map.add_map_type_init(map_type)
-If you want to wipe out the existing map types (for example the 3 default ones), you can add a +false+ argument to the +add_map_type_init+ method and the +map_type+ will be the only one.
+If you want to wipe out the existing map types (for example the 3 default ones), you can add a *false* argument to the *add_map_type_init* method and the +map_type+ will be the only one.
 
 If you want to setup the map as the default one when the map is initially displayed, you should first declare the map type then add it to the map as indicated above and finally setting it as the default map type:
 >	@map.declare_init(map_type,"my_map_type")
@@ -400,49 +399,49 @@ Future versions of the plugin may simplify that.
 ###Google Geocoding
 A helper to perform geocoding on the server side (in Ruby) is included. Here is an example of request:
 >	results = Geocoding::get("Rue Clovis Paris")
-You can also pass to the +get+ method an options hash to manage the various API key options (see the section on *GMap.header* for details). +results+ is an array of Geocoding::Placemark objects, with 2 additional attributes: +status+ and +name+. You should check if +status+ equals *Geocoding::GEO_SUCCESS* to know if the request has been successful. You can then access the various data elements.
+You can also pass to the *get* method an options hash to manage the various API key options (see the section on *GMap.header* for details). *results* is an array of Geocoding::Placemark objects, with 2 additional attributes: *status* and *name*. You should check if *status* equals *Geocoding::GEO_SUCCESS* to know if the request has been successful. You can then access the various data elements.
 
 Here is an example that will display a marker on Paris:
-	results = Geocoding::get("Rue Clovis Paris")
-	if results.status == Geocoding::GEO_SUCCESS
-		coord = results[0].latlon
-		@map.overlay_init(GMarker.new(coord,:info_window => "Rue Clovis Paris"))
-	end
+>	results = Geocoding::get("Rue Clovis Paris")
+>	if results.status == Geocoding::GEO_SUCCESS
+>		coord = results[0].latlon
+>		@map.overlay_init(GMarker.new(coord,:info_window => "Rue Clovis Paris"))
+>	end
 
 You could also have performed the geocoding on the client side with the following code, which is functionnality equivalent to the code above:
-	GMarker.new("Rue Clovis Paris",:info_window => "Rue Clovis Paris")
+>	GMarker.new("Rue Clovis Paris",:info_window => "Rue Clovis Paris")
 
-===Local Search
+### Local Search
 Local Search control has been added to the map and control objects. There are two places you need to implement it to get it to work. This is because the local search control needs an additional library added to the import as well as the control added to the map.
 
 In your controller, you add ':local_search => true' to the @map.control_init like this:
-@map = GMap.new("map_div")
-@map.control_init(:large_map => true, :map_type => true, :local_search => true)
+>@map = GMap.new("map_div")
+>@map.control_init(:large_map => true, :map_type => true, :local_search => true)
 
 And in your view, you pass ':local_search => true' to the GMap.header like this:
-<%= GMap.header(:local_search => true) %>
-<%= @map.to_html %>
-<%= @map.div(:width => 600, :height => 400) %>
+><%= GMap.header(:local_search => true) %>
+><%= @map.to_html %>
+><%= @map.div(:width => 600, :height => 400) %>
 
 You can pass options to the control_init as well. They are:
-:anchor => [:bottom_left (default), :bottom_right, :top_left, :top_right] 
-:offset_width => 10 (default)
-:offset_height => 20 (default)
-:local_search_options => "{suppressZoomToBounds : true, 
-													resultList : google.maps.LocalSearch.RESULT_LIST_INLINE, 
-													suppressInitialResultSelection : true, 
-													searchFormHint : 'Local Search powered by Google', 
-													linkTarget : GSearch.LINK_TARGET_BLANK}"
+>:anchor => [:bottom_left (default), :bottom_right, :top_left, :top_right] 
+>:offset_width => 10 (default)
+>:offset_height => 20 (default)
+>:local_search_options => "{suppressZoomToBounds : true, 
+>													resultList : google.maps.LocalSearch.RESULT_LIST_INLINE, 
+>													suppressInitialResultSelection : true, 
+>													searchFormHint : 'Local Search powered by Google', 
+>													linkTarget : GSearch.LINK_TARGET_BLANK}"
 
 So if you wanted the local search control to be at the bottom right of the map, 30 pixel in from the right and 20 pixels above the bottom and some local search options it would look like this:
-@map.control_init(:large_map => true, :map_type => true, :local_search => true, :anchor => :bottom_right, :offset_width => 30, :offset_height => 20, :local_search_options => "{suppressZoomToBounds : true, resultList : google.maps.LocalSearch.RESULT_LIST_INLINE, suppressInitialResultSelection : true, searchFormHint : 'Local Search powered by Google', linkTarget : GSearch.LINK_TARGET_BLANK}")
+>@map.control_init(:large_map => true, :map_type => true, :local_search => true, :anchor => :bottom_right, :offset_width => 30, >:offset_height => 20, :local_search_options => "{suppressZoomToBounds : true, resultList : google.maps.LocalSearch.RESULT_LIST_INLINE, >suppressInitialResultSelection : true, searchFormHint : 'Local Search powered by Google', linkTarget : GSearch.LINK_TARGET_BLANK}")
 
-==Sensor
+## Sensor
 Google now requires the 'sensor' attribute in the GET API request. It is defaulted to 'false', but if you are writing an application for one of the new cellphones with GPS out there then you can enable it by using the following call:
 
-<%= GMap.header :sensor => true %>
+> <%= GMap.header :sensor => true %>
 
-==Recent changes
+## Recent changes
 - 'sensor' added to GET URL per Google API Terms of Use. 'false' by default.
 - Local Search overlay added. See above for implementation.
 - GMarker can now be placed by address (in addition to coordinates). Some code to geocode the address when the marker is initialized is added
@@ -450,19 +449,19 @@ Google now requires the 'sensor' attribute in the GET API request. It is default
 - In JS, addition of methods to GMap2 and GMarkerGroup to center and zoom on a group of points or markers (thanks to Glen Barnes)
 - Support for easy setup of fullscreen maps
 
-==TODO
+## TODO
 - Add support for easy manipulation of external Google Maps-related libraries: Advanced tooltip manipulation (PdMarker),...
 - Addition of all GeoRss vocabularies (with all features: polylines...) to the geoRssOverlay extension
 - Tutorials
 
-==Disclaimer
+## Disclaimer
 This software is not endorsed in any way by Google.
 
-==Acknowledgement
+## Acknowledgement
 The YM4R/GM plugin bundles JavaScript libraries from John Deck (WMS layers on Google Maps), Jef Poskanzer (Clusterer on Google Maps) and Mikel Maron (GeoRss on Google Maps).
 
-==License
+## License
 The YM4R/GM plugin is released under the MIT license. The *clusterer.js* file is redistributed with a different license (but still compatible with the MIT license). Check the top of the file in *PLUGIN_ROOT/javascript* to know more.
 
-==Support
+## Support
 Any questions, enhancement proposals, bug notifications or corrections can be sent to mailto:guilhem.vellut+ym4r@gmail.com.
