@@ -1,8 +1,12 @@
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 
-# require File.expand_path(File.dirname(__FILE__) + "/../../../../config/environment")
-require File.expand_path("/Users/kueda/tmp/inat2/config/environment")
 
+if ENV["RAILS_ROOT"]
+  require File.expand_path(ENV["RAILS_ROOT"] + "/config/environment")
+else
+  warn "In order to run the unit tests, the environment variable RAILS_ROOT must be set to a valid Rails app's root directory."
+  exit
+end
 
 require 'ym4r_gm'
 require 'test/unit'
