@@ -52,11 +52,13 @@ class TestGoogleMaps< Test::Unit::TestCase
     point = GLatLng.new([123.4,123.6])
     assert_equal("var point = new GLatLng(123.4,123.6);",point.declare("point"))
     assert_equal("point",point.variable)
-  end
+    assert_equal("point",point.variable.to_str)
+end
 
   def test_array_indexing
     obj = Variable.new("obj")
     assert_equal("obj[0]",obj[0].variable)
+    assert_equal("obj[0]",obj[0].variable.to_str)
   end
 
   def test_google_maps_geocoding
