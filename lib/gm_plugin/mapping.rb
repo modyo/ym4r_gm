@@ -117,9 +117,10 @@ module Ym4r
         @variable
       end
       #Returns the expression inside the Variable followed by a ";"
-      def to_s
+      def to_str
         @variable + ";"
       end
+      alias to_s to_str
 
       UNDEFINED = Variable.new("undefined")
     end

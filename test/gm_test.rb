@@ -1,6 +1,12 @@
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 
-require File.expand_path(File.dirname(__FILE__) + "/../../../../config/environment")
+
+if ENV["RAILS_ROOT"]
+  require File.expand_path(ENV["RAILS_ROOT"] + "/config/environment")
+else
+  warn "In order to run the unit tests, the environment variable RAILS_ROOT must be set to a valid Rails app's root directory."
+  exit
+end
 
 require 'ym4r_gm'
 require 'test/unit'
@@ -46,11 +52,13 @@ class TestGoogleMaps< Test::Unit::TestCase
     point = GLatLng.new([123.4,123.6])
     assert_equal("var point = new GLatLng(123.4,123.6);",point.declare("point"))
     assert_equal("point",point.variable)
-  end
+    assert_equal("point",point.variable.to_str)
+end
 
   def test_array_indexing
     obj = Variable.new("obj")
     assert_equal("obj[0]",obj[0].variable)
+    assert_equal("obj[0]",obj[0].variable.to_str)
   end
 
   def test_google_maps_geocoding
