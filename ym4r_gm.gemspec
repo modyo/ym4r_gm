@@ -43,7 +43,8 @@ Gem::Specification.new do |s|
     "lib/tasks/gm_tasks.rake",
     "lib/ym4r_gm.rb",
     "rakefile.rb",
-    "test/gm_test.rb"
+    "test/gm_test.rb",
+    "ym4r_gm.gemspec"
   ]
   s.homepage = %q{http://github.com/grzegorzblaszczyk/ym4r_gm}
   s.licenses = ["MIT"]
